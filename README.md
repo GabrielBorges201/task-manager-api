@@ -4,45 +4,45 @@
 ![Python](https://img.shields.io/badge/python-3.12-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-API RESTful para gerenciamento de tarefas, construída com FastAPI, PostgreSQL, Docker e autenticação JWT. O projeto aplica boas práticas de desenvolvimento backend: acesso assíncrono ao banco, migrações, testes automatizados e integração contínua.
+A RESTful task management API built with FastAPI, PostgreSQL, Docker, and JWT authentication. The project applies modern backend practices: async database access, migrations, automated tests, and continuous integration.
 
-**Demo online:** https://task-manager-api-dsle.onrender.com/docs
+**Live demo:** https://task-manager-api-dsle.onrender.com/docs
 
-> O deploy usa o plano gratuito do Render. Se a API estiver inativa, a primeira requisição pode levar cerca de um minuto para responder.
+> The demo runs on Render's free tier. If the service is idle, the first request may take around a minute to respond.
 
-## Tecnologias
+## Tech Stack
 
-- **FastAPI**: framework web assíncrono de alto desempenho
-- **PostgreSQL**: banco de dados relacional
-- **SQLAlchemy (async)**: ORM com suporte assíncrono
-- **Alembic**: migrações de banco de dados
-- **JWT**: autenticação stateless
-- **Docker e Docker Compose**: containerização do ambiente
-- **Pytest**: testes automatizados com relatório de cobertura
-- **GitHub Actions**: integração contínua (CI)
+- **FastAPI**: high-performance async web framework
+- **PostgreSQL**: relational database
+- **SQLAlchemy (async)**: async ORM
+- **Alembic**: database migrations
+- **JWT**: stateless authentication
+- **Docker & Docker Compose**: containerized environment
+- **Pytest**: automated tests with coverage reports
+- **GitHub Actions**: continuous integration (CI)
 
-## Funcionalidades
+## Features
 
-- Registro e login de usuários com JWT
-- CRUD completo de tarefas
-- Filtros por status, prioridade e estado de conclusão
-- Paginação das listagens
-- Rotas protegidas e isolamento de dados por usuário: cada usuário acessa apenas as próprias tarefas (prevenção de BOLA)
-- Testes de integração com relatório de cobertura
+- User registration and login with JWT
+- Full CRUD for tasks
+- Filtering by status, priority, and completion state
+- Paginated listings
+- Protected routes and per-user data isolation: each user can only access their own tasks (BOLA prevention)
+- Integration tests with coverage reports
 
-## Arquitetura
+## Architecture
 
-O código é dividido em camadas para separar responsabilidades:
+The code is split into layers to separate responsibilities:
 
-- `routers/`: recebem as requisições HTTP e devolvem as respostas
-- `services/`: regras de negócio
-- `repositories/`: acesso ao banco de dados
-- `schemas/`: validação de entrada e saída (Pydantic)
-- `models/`: modelos do banco (SQLAlchemy)
+- `routers/`: handle HTTP requests and responses
+- `services/`: business logic
+- `repositories/`: database access
+- `schemas/`: input and output validation (Pydantic)
+- `models/`: database models (SQLAlchemy)
 
-## Como executar
+## Getting Started
 
-### Com Docker (recomendado)
+### Using Docker (recommended)
 
 ```bash
 git clone https://github.com/GabrielBorges240/task-manager-api.git
@@ -53,9 +53,9 @@ docker compose up -d
 docker compose exec api alembic upgrade head
 ```
 
-Documentação interativa: http://localhost:8000/docs
+Interactive API docs: http://localhost:8000/docs
 
-### Ambiente local
+### Local development
 
 ```bash
 python -m venv venv
@@ -72,74 +72,74 @@ alembic upgrade head
 uvicorn app.main:app --reload
 ```
 
-## Variáveis de ambiente
+## Environment Variables
 
-Copie `.env.example` para `.env` e ajuste os valores. Nunca envie o `.env` para o repositório.
+Copy `.env.example` to `.env` and adjust the values. Never commit your `.env` file.
 
-| Variável | Descrição |
+| Variable | Description |
 |---|---|
-| `DATABASE_URL` | URL de conexão com o PostgreSQL |
-| `SECRET_KEY` | Chave usada para assinar os tokens JWT |
-| `ALGORITHM` | Algoritmo do JWT (ex.: `HS256`) |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | Tempo de expiração do token |
+| `DATABASE_URL` | PostgreSQL connection URL |
+| `SECRET_KEY` | Secret used to sign JWT tokens |
+| `ALGORITHM` | JWT algorithm (e.g. `HS256`) |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | Token expiration time |
 
-## Endpoints
+## API Endpoints
 
-### Autenticação
+### Authentication
 
-| Método | Endpoint | Descrição |
+| Method | Endpoint | Description |
 |---|---|---|
-| POST | `/auth/register` | Cria uma nova conta |
-| POST | `/auth/login` | Autentica e retorna o token de acesso |
+| POST | `/auth/register` | Create a new account |
+| POST | `/auth/login` | Authenticate and get an access token |
 
-### Usuários
+### Users
 
-| Método | Endpoint | Descrição |
+| Method | Endpoint | Description |
 |---|---|---|
-| GET | `/users/me` | Retorna o perfil do usuário autenticado |
-| PATCH | `/users/me` | Atualiza o perfil do usuário autenticado |
+| GET | `/users/me` | Get the current user's profile |
+| PATCH | `/users/me` | Update the current user's profile |
 
-### Tarefas
+### Tasks
 
-| Método | Endpoint | Descrição |
+| Method | Endpoint | Description |
 |---|---|---|
-| POST | `/tasks` | Cria uma tarefa |
-| GET | `/tasks` | Lista as tarefas do usuário (com filtros e paginação) |
-| GET | `/tasks/{id}` | Busca uma tarefa por ID |
-| PATCH | `/tasks/{id}` | Atualiza uma tarefa |
-| DELETE | `/tasks/{id}` | Exclui uma tarefa |
+| POST | `/tasks` | Create a task |
+| GET | `/tasks` | List the user's tasks (filters and pagination) |
+| GET | `/tasks/{id}` | Get a task by ID |
+| PATCH | `/tasks/{id}` | Update a task |
+| DELETE | `/tasks/{id}` | Delete a task |
 
-## Exemplo de uso
+## Usage Example
 
 ```bash
-# 1. Registrar
+# 1. Register
 curl -X POST http://localhost:8000/auth/register \
   -H "Content-Type: application/json" \
   -d '{"name": "Gabriel", "email": "gabriel@email.com", "password": "123456"}'
 
-# 2. Fazer login e copiar o access_token
+# 2. Log in and copy the access_token
 curl -X POST http://localhost:8000/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email": "gabriel@email.com", "password": "123456"}'
 
-# 3. Criar uma tarefa
+# 3. Create a task
 curl -X POST http://localhost:8000/tasks \
-  -H "Authorization: Bearer SEU_TOKEN" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"title": "Estudar FastAPI", "priority": "high"}'
+  -d '{"title": "Study FastAPI", "priority": "high"}'
 
-# 4. Listar tarefas pendentes
+# 4. List pending tasks
 curl "http://localhost:8000/tasks?status=pending&page=1&limit=20" \
-  -H "Authorization: Bearer SEU_TOKEN"
+  -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
-## Testes
+## Running Tests
 
 ```bash
 pytest tests/ -v --cov=app --cov-report=term-missing
 ```
 
-## Estrutura do projeto
+## Project Structure
 
 ```
 task-manager-api/
@@ -159,20 +159,20 @@ task-manager-api/
 └── .github/workflows/
 ```
 
-## Próximos passos
+## Roadmap
 
-- Refresh token e logout
+- Refresh tokens and logout
 - Rate limiting
-- Busca por texto e ordenação nas listagens
-- Deploy automatizado (CD)
+- Text search and sorting on listings
+- Automated deployment (CD)
 
-## Licença
+## License
 
-Distribuído sob a licença MIT.
+Distributed under the MIT License.
 
-## Autor
+## Author
 
 **Gabriel Borges**
-Desenvolvedor backend em Python, com foco em APIs, arquitetura de software e boas práticas.
+Python backend developer focused on APIs, software architecture, and best practices.
 
 [GitHub](https://github.com/GabrielBorges240)
