@@ -1,5 +1,6 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.models.usuario import Usuario
 
 
@@ -15,15 +16,11 @@ class UsuarioRepository:
         return usuario
 
     async def buscar_por_id(self, usuario_id: int) -> Usuario | None:
-        result = await self.db.execute(
-            select(Usuario).where(Usuario.id == usuario_id)
-        )
+        result = await self.db.execute(select(Usuario).where(Usuario.id == usuario_id))
         return result.scalar_one_or_none()
 
     async def buscar_por_email(self, email: str) -> Usuario | None:
-        result = await self.db.execute(
-            select(Usuario).where(Usuario.email == email)
-        )
+        result = await self.db.execute(select(Usuario).where(Usuario.email == email))
         return result.scalar_one_or_none()
 
     async def atualizar(self, usuario: Usuario, dados: dict) -> Usuario:

@@ -3,11 +3,14 @@ import pytest
 
 @pytest.mark.asyncio
 async def test_registro_sucesso(client):
-    r = await client.post("/auth/registro", json={
-        "nome": "Carlos Silva",
-        "email": "carlos@teste.com",
-        "senha": "senha123"
-    })
+    r = await client.post(
+        "/auth/registro",
+        json={
+            "nome": "Carlos Silva",
+            "email": "carlos@teste.com",
+            "senha": "senha123",
+        },
+    )
     assert r.status_code == 201
     data = r.json()
     assert data["email"] == "carlos@teste.com"
@@ -27,12 +30,21 @@ async def test_registro_email_duplicado(client):
 
 @pytest.mark.asyncio
 async def test_login_sucesso(client):
-    await client.post("/auth/registro", json={
-        "nome": "Joao", "email": "joao@teste.com", "senha": "senha123"
-    })
-    r = await client.post("/auth/login", json={
-        "email": "joao@teste.com", "senha": "senha123"
-    })
+    await client.post(
+        "/auth/registro",
+        json={
+            "nome": "Joao",
+            "email": "joao@teste.com",
+            "senha": "senha123",
+        },
+    )
+    r = await client.post(
+        "/auth/login",
+        json={
+            "email": "joao@teste.com",
+            "senha": "senha123",
+        },
+    )
     assert r.status_code == 200
     assert "access_token" in r.json()
     assert r.json()["token_type"] == "bearer"
@@ -40,12 +52,21 @@ async def test_login_sucesso(client):
 
 @pytest.mark.asyncio
 async def test_login_senha_errada(client):
-    await client.post("/auth/registro", json={
-        "nome": "Teste", "email": "err@teste.com", "senha": "correta"
-    })
-    r = await client.post("/auth/login", json={
-        "email": "err@teste.com", "senha": "errada"
-    })
+    await client.post(
+        "/auth/registro",
+        json={
+            "nome": "Teste",
+            "email": "err@teste.com",
+            "senha": "correta",
+        },
+    )
+    r = await client.post(
+        "/auth/login",
+        json={
+            "email": "err@teste.com",
+            "senha": "errada",
+        },
+    )
     assert r.status_code == 401
 
 

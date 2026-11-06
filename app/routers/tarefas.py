@@ -1,10 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.database import get_db
-from app.schemas.tarefa import TarefaCriar, TarefaAtualizar, TarefaResposta, TarefaListagem
+from app.models.tarefa import PrioridadeTarefa, StatusTarefa
 from app.repositories.tarefa import TarefaRepository
-from app.models.tarefa import StatusTarefa, PrioridadeTarefa
+from app.schemas.tarefa import (
+    TarefaAtualizar,
+    TarefaCriar,
+    TarefaListagem,
+    TarefaResposta,
+)
 from app.services.auth import get_current_user_id
 
 router = APIRouter(prefix="/tarefas", tags=["Tarefas"])
@@ -22,11 +29,11 @@ async def criar_tarefa(
 
 @router.get("", response_model=TarefaListagem)
 async def listar_tarefas(
-    pagina:    int                       = Query(1, ge=1),
-    limite:    int                       = Query(20, ge=1, le=100),
-    status:    Optional[StatusTarefa]    = None,
+    pagina: int = Query(1, ge=1),
+    limite: int = Query(20, ge=1, le=100),
+    status: Optional[StatusTarefa] = None,
     prioridade: Optional[PrioridadeTarefa] = None,
-    concluida: Optional[bool]            = None,
+    concluida: Optional[bool] = None,
     usuario_id: int = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
@@ -48,7 +55,7 @@ async def buscar_tarefa(
     usuario_id: int = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
-    repo   = TarefaRepository(db)
+    repo = TarefaRepository(db)
     tarefa = await repo.buscar_por_id(tarefa_id)
     if not tarefa:
         raise HTTPException(status_code=404, detail="Tarefa não encontrada")
@@ -64,7 +71,7 @@ async def atualizar_tarefa(
     usuario_id: int = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
-    repo   = TarefaRepository(db)
+    repo = TarefaRepository(db)
     tarefa = await repo.buscar_por_id(tarefa_id)
     if not tarefa:
         raise HTTPException(status_code=404, detail="Tarefa não encontrada")
@@ -79,7 +86,7 @@ async def deletar_tarefa(
     usuario_id: int = Depends(get_current_user_id),
     db: AsyncSession = Depends(get_db),
 ):
-    repo   = TarefaRepository(db)
+    repo = TarefaRepository(db)
     tarefa = await repo.buscar_por_id(tarefa_id)
     if not tarefa:
         raise HTTPException(status_code=404, detail="Tarefa não encontrada")

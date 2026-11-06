@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
-from jose import JWTError, jwt
+
 import bcrypt
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from jose import JWTError, jwt
+
 from app.config import settings
 
 security = HTTPBearer()

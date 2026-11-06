@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, usuarios, tarefas
+
+from app.routers import auth, tarefas, usuarios
 
 app = FastAPI(
     title="Task Manager API",
@@ -12,7 +13,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # em produção: liste os domínios permitidos
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )

@@ -1,7 +1,9 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
 from typing import Optional
-from app.models.tarefa import Tarefa, StatusTarefa, PrioridadeTarefa
+
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.tarefa import PrioridadeTarefa, StatusTarefa, Tarefa
 
 
 class TarefaRepository:
@@ -16,9 +18,7 @@ class TarefaRepository:
         return tarefa
 
     async def buscar_por_id(self, tarefa_id: int) -> Tarefa | None:
-        result = await self.db.execute(
-            select(Tarefa).where(Tarefa.id == tarefa_id)
-        )
+        result = await self.db.execute(select(Tarefa).where(Tarefa.id == tarefa_id))
         return result.scalar_one_or_none()
 
     async def listar(
@@ -32,19 +32,20 @@ class TarefaRepository:
     ) -> tuple[list[Tarefa], int]:
         query = select(Tarefa).where(Tarefa.usuario_id == usuario_id)
 
-        if status:     query = query.where(Tarefa.status == status)
-        if prioridade: query = query.where(Tarefa.prioridade == prioridade)
-        if concluida is not None: query = query.where(Tarefa.concluida == concluida)
+        if status:
+            query = query.where(Tarefa.status == status)
+        if prioridade:
+            query = query.where(Tarefa.prioridade == prioridade)
+        if concluida is not None:
+            query = query.where(Tarefa.concluida == concluida)
 
-        total_result = await self.db.execute(
-            select(func.count()).select_from(query.subquery())
-        )
+        total_result = await self.db.execute(select(func.count()).select_from(query.subquery()))
         total = total_result.scalar()
 
         result = await self.db.execute(
             query.order_by(Tarefa.criado_em.desc())
-                 .offset((pagina - 1) * limite)
-                 .limit(limite)
+            .offset((pagina - 1) * limite)
+            .limit(limite)
         )
         return result.scalars().all(), total
 

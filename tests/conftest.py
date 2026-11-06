@@ -1,9 +1,10 @@
 import pytest
 import pytest_asyncio
-from httpx import AsyncClient, ASGITransport
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from app.main import app
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
 from app.database import Base, get_db
+from app.main import app
 
 DATABASE_TEST_URL = "sqlite+aiosqlite:///./test.db"
 
@@ -34,7 +35,8 @@ async def client(db):
 
     app.dependency_overrides[get_db] = override_db
     async with AsyncClient(
-        transport=ASGITransport(app=app), base_url="http://test"
+        transport=ASGITransport(app=app),
+        base_url="http://test",
     ) as c:
         yield c
     app.dependency_overrides.clear()
@@ -43,14 +45,20 @@ async def client(db):
 @pytest_asyncio.fixture
 async def usuario_e_token(client):
     """Cria usuário e retorna token JWT"""
-    await client.post("/auth/registro", json={
-        "nome": "Ana Teste",
-        "email": "ana@teste.com",
-        "senha": "senha123"
-    })
-    r = await client.post("/auth/login", json={
-        "email": "ana@teste.com",
-        "senha": "senha123"
-    })
+    await client.post(
+        "/auth/registro",
+        json={
+            "nome": "Ana Teste",
+            "email": "ana@teste.com",
+            "senha": "senha123",
+        },
+    )
+    r = await client.post(
+        "/auth/login",
+        json={
+            "email": "ana@teste.com",
+            "senha": "senha123",
+        },
+    )
     token = r.json()["access_token"]
     return {"token": token, "headers": {"Authorization": f"Bearer {token}"}}
